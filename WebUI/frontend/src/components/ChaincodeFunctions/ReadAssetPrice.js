@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 // import {Link} from 'react-router-dom';
 import Error from '../Templates/Error';
-import PrintBuyRequest from '../Templates/PrintBuyRequest';
+import PrintSalesPrice from '../Templates/PrintSalesPrice';
 
 
-function ReadBuyRequest(props) {
-
+function ReadAssetPrice(props) {
 
     let back;//link to go back to home page 
     if(props.org==="org1"){
@@ -44,8 +43,8 @@ function ReadBuyRequest(props) {
         };  
         
         //cant fetch any data if everythign is not in place
-        if(formData.assetID !=="" ){
-            const response = await fetch('/postReadBuyRequest',options);
+        if(formData.assetID !==""){
+            const response = await fetch('/postReadAssetPrice',options);
             const json = await response.json();
             setPostReply(json); 
             console.log(json);
@@ -54,15 +53,13 @@ function ReadBuyRequest(props) {
         
 
     };
-
-    
-
+    console.log(postReply.tempErr)
 
 
-    
+
     return(
         <div className="container justify-content-center p-5 ">
-            <h1 className="mt-5">Read Buy Request </h1>
+            <h1 className="mt-5">Read asset price from shared collection</h1>
         
             <div className="form-group w-25 mx-auto">
                 <label htmlFor="assetID" className="col-form-label mx-auto">Asset ID {formInputID}</label>
@@ -72,25 +69,26 @@ function ReadBuyRequest(props) {
                 </div>
             </div>
     
-
+        
+    
     
             <div className="form-group row d-block">
                 <div className="col-sm-12">
-                    <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">Read Buy Request</button>
+                    <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">Read Price</button>
                     {/* onClickCapture also worked */}
                 </div>
             </div>
         
     
             <div>
-                {postReply.assetID ? (
+                {postReply.asset_id ? (
                     <div className="mx-auto container-fluid p-5">
                         <div className="d-block p-5">
-                            <h3> The buy request details: </h3>
+                            <h3>{postReply.asset_id} is for sale: </h3>
                         </div>      
                         <section>
                         
-                            <PrintBuyRequest assetID={postReply.assetID} buyerID={postReply.buyerID} buyerMSP={postReply.buyerMSP}/>
+                        <PrintSalesPrice ID={postReply.asset_id} price={postReply.price} tradeID={postReply.trade_id} salt={postReply.salt} />
                             
                         </section> 
                         <hr />
@@ -99,52 +97,21 @@ function ReadBuyRequest(props) {
                         </div>
                     
                     </div>
-                ) : postReply.errorCLI ? ( 
-                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
-                ): postReply.serverError ?(
-                    <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
-                ):postReply.exists==="false" ?(
-                    <Error message={"Request to buy for "+formInputID+" does not exist"} backlink={back} />
-                ):(
-                    <Error message="See if there are any buy requests using assets ID" backlink={back} />
-                )
+                    ) : postReply.errorCLI ? ( 
+                        <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
+                    ):postReply.serverError ? ( 
+                        <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+formInputID+" does not exist."}backlink={back} />
+                    ):(
+                        <Error message="Plese enter assetID to search if there is a price available." backlink={back} />
+                    )
                 }
             </div>
     
         </div>
     );
-
-    // var count = Object.keys(items).length;
-    // console.log("this is the length ",count," this is the type of items ", typeof items, " length of items.id",items.ID)
-    // console.log("this is the size of count",count)
-    // if(items.assetID){
-    //     return(
-    //         <div className="mx-auto container-fluid p-5">
-    //             <div className="d-block p-5">
-    //                 <h3> The requesting Buyers details: </h3>
-    //             </div>      
-    //             <section>
-                  
-    //                     <PrintBuyRequest assetID={items.assetID} buyerID={items.buyerID}/>
-                    
-    //             </section> 
-    //             <hr />
-    //             <div>
-    //                 <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
-    //             </div>
-               
-    //         </div>
-    //     );
-    // }
-
-    // return(
-    //     <Error message="Something went wrong.Request to Buy couldn't be submitted."backlink={back} />
-    // );
-
-
     
 
 
 }
 
-export default ReadBuyRequest;
+export default ReadAssetPrice;

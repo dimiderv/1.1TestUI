@@ -17,8 +17,6 @@ function AgreeToBuy(props) {
 
 
     const [formInputID,setFormInputID]=useState('');
-    const [formInputPrice,setFormInputPrice]=useState('');
-    const [formInputTradeID,setFormInputTradeID]=useState('');
     const [postReply, setPostReply] = useState([]);
    
 
@@ -35,8 +33,6 @@ function AgreeToBuy(props) {
         fetchAttempt= !fetchAttempt;
         const formData={
             assetID:formInputID,
-            price:formInputPrice,
-            tradeID:formInputTradeID,
             org:props.org,
             
         }
@@ -77,19 +73,6 @@ function AgreeToBuy(props) {
             </div>
     
           
-            <div className="form-group w-25 mx-auto">
-                <label htmlFor="price" className="col-form-label mx-auto">Price{formInputPrice} </label>
-                <div className="col-sm-10 mx-auto">
-                <input type="text" className="form-control" onChange={e=>setFormInputPrice(e.target.value)} id="price" placeholder="Price"/>
-                </div>
-            </div>
-            <div className="form-group w-25 mx-auto">
-                <label htmlFor="tradeId" className="col-form-label mx-auto">Trade ID  {formInputTradeID}</label>
-                <div className="col-sm-10 mx-auto">
-                <input type="number" className="form-control" onChange={e=>setFormInputTradeID(e.target.value)} id="tradeId" placeholder="tradeId"/>
-                </div>
-            </div>
-    
     
             <div className="form-group row d-block">
                 <div className="col-sm-12">
@@ -107,7 +90,7 @@ function AgreeToBuy(props) {
                         </div>      
                         <section>
                         
-                        <PrintBidPrice ID={postReply.asset_id} price={postReply.price} tradeID={postReply.trade_id} />
+                        <PrintBidPrice ID={postReply.asset_id} price={postReply.price} tradeID={postReply.trade_id} salt={postReply.salt} />
                             
                         </section> 
                         <hr />
@@ -119,7 +102,7 @@ function AgreeToBuy(props) {
                 ) : postReply.errorCLI ? ( 
                     <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
                 ): postReply.serverError ?(
-                    <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
+                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink={back}/>
                 ):(
                     <Error message="Enter price and trade id that seller set and agree to buy asset" backlink={back} />
                 )

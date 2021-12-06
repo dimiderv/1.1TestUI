@@ -10,6 +10,7 @@ function CreateAsset() {
     const [formInputID,setFormInputID]=useState('');
     const [formInputWeight,setFormInputWeight]=useState('');
     const [formInputColor,setFormInputColor]=useState('');
+    const [formInputType,setFormInputType]=useState('');
     const [postReply, setPostReply] = useState([]);
 
     let fetchAttempt=false;
@@ -26,7 +27,8 @@ function CreateAsset() {
         const formData={
             assetID:formInputID,
             weight:formInputWeight,
-            color:formInputColor
+            color:formInputColor,
+            assetType:formInputType
         }
       
        
@@ -39,7 +41,7 @@ function CreateAsset() {
         };  
         
         //cant fetch any data if everythign is not in place
-        if(formData.assetID !=="" && formData.weight!=="" && formData.color!==""){
+        if(formData.assetID !=="" && formData.weight!=="" && formData.color!=="" && formData.assetType!==""){
             const response = await fetch('/createAssetData',options);
             const json = await response.json();
             setPostReply(json); 
@@ -76,17 +78,34 @@ function CreateAsset() {
                     </div>
                 </div>
 
-              
-                <div className="form-group w-25 mx-auto">
-                    <label htmlFor="color" className="col-form-label mx-auto">Color{formInputColor} </label>
-                    <div className="col-sm-10 mx-auto">
-                    <input type="text" className="form-control" onChange={e=>setFormInputColor(e.target.value)} id="color" placeholder="color"/>
+                <div className="form-group w-25 mx-auto radio-container">
+                    <label htmlFor="color" className="col-form-label mx-auto">Asset Type {formInputType} </label>
+                    <div className="col-sm-12 mx-auto "  onChange={e=>setFormInputType(e.target.value)}>
+                    {/* <input type="text" className="form-control" onChange={e=>setFormInputColor(e.target.value)} id="color" placeholder="color"/> */}
+                        <input type="radio" value="Apples" name="type" /> Apples 
+                        <input type="radio" value="Berries" name="type" /> Berries 
+                        <input type="radio" value="Grapes" name="type" /> Grapes
                     </div>
                 </div>
+
+                <div className="form-group w-25 mx-auto radio-container">
+
+                    <label htmlFor="color" className="col-form-label mx-auto">Color {formInputColor} </label>
+                    <div className="col-sm-10 mx-auto "  onChange={e=>setFormInputColor(e.target.value)}>
+                    {/* <input type="text" className="form-control" onChange={e=>setFormInputColor(e.target.value)} id="color" placeholder="color"/> */}
+                        <input type="radio" value="Red" name="color" /> Red   
+                        <input type="radio" value="Black" name="color" /> Black 
+                        <input type="radio" value="Green" name="color" /> Green <br/>
+                        <input type="radio" value="Yellow" name="color" /> Yellow
+                        <input type="radio" value="Blue" name="color" /> Blue
+                    </div>
+                </div>
+
+
                 <div className="form-group w-25 mx-auto">
                     <label htmlFor="color" className="col-form-label mx-auto">Weight  {formInputWeight}</label>
                     <div className="col-sm-10 mx-auto">
-                    <input type="number" className="form-control" onChange={e=>setFormInputWeight(e.target.value)} id="weight" placeholder="weight"/>
+                    <input type="number" className="form-control" onChange={e=>setFormInputWeight(e.target.value)} id="weight" min="10" max="100" placeholder="weight"/>
                     </div>
                 </div>
 
@@ -108,7 +127,7 @@ function CreateAsset() {
                         <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
                         
-                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} />
+                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} sensorData={postReply.sensorData} ownerOrg={postReply.ownerOrg} assetType={postReply.assetType}/>
                             
                         </div> 
                         <hr />

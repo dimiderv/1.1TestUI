@@ -94,7 +94,7 @@ function ReadAsset(props) {
                         <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
                         
-                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} />
+                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} sensorData={postReply.sensorData} ownerOrg={postReply.ownerOrg} assetType={postReply.assetType} />
                             
                         </div> 
                         <hr />

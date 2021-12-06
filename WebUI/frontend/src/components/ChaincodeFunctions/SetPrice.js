@@ -104,7 +104,7 @@ function SetPrice(props) {
                         </div>      
                         <section>
                         
-                        <PrintSalesPrice ID={postReply.asset_id} price={postReply.price} tradeID={postReply.trade_id} />
+                        <PrintSalesPrice ID={postReply.asset_id} price={postReply.price} tradeID={postReply.trade_id} salt={postReply.salt} />
                             
                         </section> 
                         <hr />
@@ -115,6 +115,8 @@ function SetPrice(props) {
                     </div>
                     ) : postReply.errorCLI ? ( 
                         <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
+                    ):postReply.serverError ?(
+                        <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink={back}/>
                     ):(
                         <Error message="Plese enter assetID ,price and a tradeId." backlink={back} />
                     )

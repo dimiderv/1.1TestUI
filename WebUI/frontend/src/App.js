@@ -17,6 +17,8 @@ import RequestToBuy from './components/ChaincodeFunctions/RequestToBuy';
 import TransferRequestedAsset from './components/ChaincodeFunctions/TransferRequestedAsset';
 import AgreeToBuy from './components/ChaincodeFunctions/AgreeToBuy';
 import DeleteBuyRequest from './components/ChaincodeFunctions/DeleteBuyRequest';
+import UpdateSensorData from './components/ChaincodeFunctions/UpdateSensorData';
+import DeleteBidRequest from './components/ChaincodeFunctions/DeleteBidRequest';
 
 /* Queries */
 import ReadAsset from './components/ChaincodeFunctions/ReadAsset';
@@ -25,6 +27,7 @@ import AssetExists from './components/ChaincodeFunctions/AssetExists';
 import GetAssetHistory from './components/ChaincodeFunctions/GetAssetHistory';
 import ReadBuyRequest from './components/ChaincodeFunctions/ReadBuyRequest';
 import ShowPost from './components/ShowPost';
+import ReadAssetPrice from './components/ChaincodeFunctions/ReadAssetPrice';
 
 function App() {
   return (
@@ -46,6 +49,9 @@ function App() {
             </Route>
             <Route exact path="/farmerFrontPage/updateAsset" >
               <UpdateAsset org="org1"/>
+            </Route>
+            <Route exact path="/farmerFrontPage/updateSensorData" >
+              <UpdateSensorData org="org1"/>
             </Route>
             <Route exact path="/farmerFrontPage/deleteAsset" >
               <DeleteAsset org="org1"/>
@@ -77,6 +83,9 @@ function App() {
             <Route exact path="/retailerFrontPage/updateAsset" >
               <UpdateAsset org="org2"/>
             </Route>
+            <Route exact path="/retailerFrontPage/updateSensorData" >
+              <UpdateSensorData org="org2"/>
+            </Route>
             <Route exact path="/retailerFrontPage/deleteAsset" >
               <DeleteAsset org="org2"/>
             </Route>
@@ -104,8 +113,12 @@ function App() {
             <Route exact path="/retailerFrontPage/deleteBuyRequest" >
               <DeleteBuyRequest org="org2"/>
             </Route>
-
-
+            <Route exact path="/retailerFrontPage/deleteBidRequest" >
+              <DeleteBidRequest org="org2"/>
+            </Route>
+            <Route exact path="/retailerFrontPage/readAssetPrice">
+              <ReadAssetPrice org="org2"/>
+            </Route>
             
             {/* Supermarket related functions */}
             <Route path="/supermarketFrontPage" exact component={SupermarketFrontPage} />
@@ -117,6 +130,9 @@ function App() {
             </Route>
             <Route exact path="/supermarketFrontPage/updateAsset" >
               <UpdateAsset org="org3"/>
+            </Route>
+            <Route exact path="/supermarketFrontPage/updateSensorData" >
+              <UpdateSensorData org="org3"/>
             </Route>
             <Route exact path="/supermarketFrontPage/deleteAsset" >
               <DeleteAsset org="org3"/>
@@ -133,13 +149,19 @@ function App() {
             <Route exact path="/supermarketFrontPage/deleteBuyRequest" >
               <DeleteBuyRequest org="org3"/>
             </Route>
+            <Route exact path="/supermarketFrontPage/deleteBidRequest" >
+              <DeleteBidRequest org="org3"/>
+            </Route>
+            {/* Might not use set price for org3. In handler i dont use it */}
             <Route exact path="/supermarketFrontPage/setPrice" >
               <SetPrice org="org3"/>
             </Route>
             <Route exact path="/supermarketFrontPage/agreeToBuy" >
               <AgreeToBuy org="org3"/>
             </Route>
-
+            <Route exact path="/supermarketFrontPage/readAssetPrice">
+              <ReadAssetPrice org="org3"/>
+            </Route>
           </Switch>
       </div>
     </Router>

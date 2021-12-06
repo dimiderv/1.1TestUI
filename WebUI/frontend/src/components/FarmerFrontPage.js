@@ -18,7 +18,7 @@ function FarmerFrontPage() {
     // };
 
     return(
-        <section>
+        <section className="mainPage">
 
             {/* <!-- Slider --> */}
             <div className="carousel slide" id="mainSlide">
@@ -43,13 +43,13 @@ function FarmerFrontPage() {
 
             
             {/* <!-- Content --> */}
-            <div className="container-fluid p-5">
-                <h1 className="bg-light p-5" id="projectAnchor">Transactions </h1>
+            <div className="container-fluid p-5 transaction-container ">
+                <h1 className=" p-5" id="projectAnchor">Transactions </h1>
                 
                 {/* <!-- cards --> */}
-                <div className="card-deck">
+                <div className="card-deck transaction-cards ">
 
-                    <div className="card">
+                    <div className="card ">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Initialize Ledger</h6>
@@ -59,7 +59,7 @@ function FarmerFrontPage() {
                         <p className="text-center"><a href="/initLedger" className="btn btn-small btn-primary" >Initialize Ledger</a></p>
                     </div>
 
-                    <div className="card">
+                    <div className="card  ">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Create Asset</h6>
@@ -76,6 +76,15 @@ function FarmerFrontPage() {
 
                         </div>
                         <p className="text-center"><a href="/farmerFrontPage/updateAsset" className="btn btn-small btn-primary" >Update</a></p>
+                    </div>
+                    <div className="card ">
+                        <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
+                        <div className="card-body">
+                            <h6 className="card-title">Update Sensor Data</h6>
+                            <p className="card-text ">Update sensor Data</p>
+
+                        </div>
+                        <p className="text-center"><a href="/farmerFrontPage/updateSensorData" className="btn btn-small btn-primary" >Update Sensor</a></p>
                     </div>
                     <div className="card ">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
@@ -98,7 +107,7 @@ function FarmerFrontPage() {
                         <p className="text-center"><a href="/farmerFrontPage/setPrice" className="btn btn-small btn-primary" >Set Price</a></p>
                     </div>
 
-                    <div className="card bg-danger">
+                    <div className="card ">
                         <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Transfer Asset</h6>
@@ -111,14 +120,14 @@ function FarmerFrontPage() {
                 </div> 
                 
             </div> 
-            <div className="container-fluid p-5">
-                <h1 className="bg-light p-5" id="queriesAnchor">Queries</h1>
+            <div className="container-fluid p-5 query-container">
+                <h1 className=" p-5" id="queriesAnchor">Queries</h1>
                 
                 {/* <!-- cards --> */}
-                <div className="card-deck">
+                <div className="card-deck query-cards">
 
                    
-                    <div className="card ">
+                    <div className="card">
                         <img className="card-img-top " src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Search Asset</h6>
@@ -137,7 +146,7 @@ function FarmerFrontPage() {
                         <p className="text-center"><a href="/farmerFrontPage/readAsset" className="btn btn-small btn-primary">Read Asset</a></p>
                     </div>
 
-                    <div className="card bg-danger">
+                    <div className="card ">
                         <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Read buy request</h6>

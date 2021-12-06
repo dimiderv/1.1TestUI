@@ -1,34 +1,33 @@
 import React, {useEffect, useState} from 'react';
 // import {Link} from 'react-router-dom';
 import Error from '../Templates/Error';
-import PrintBuyRequest from '../Templates/PrintBuyRequest';
+//import PrintAssets from '../Templates/PrintAssets';
 
 
-function ReadBuyRequest(props) {
+function DeleteBidRequest(props) {
 
-
+    
     let back;//link to go back to home page 
-    if(props.org==="org1"){
-       back="/farmerFrontPage"; //assigning values like this doesnt work
-    }else if (props.org==="org2"){
+
+    if (props.org==="org2"){
         back="/retailerFrontPage";
     }else{
         back="/supermarketFrontPage";
     }
+
+
     const [formInputID,setFormInputID]=useState('');
     const [postReply, setPostReply] = useState([]);
 
-    let fetchAttempt=false;
     useEffect( () => {     
         
  
         fetchPostReply();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     async function fetchPostReply ()  {
 
-        fetchAttempt= !fetchAttempt;
+
         const formData={
             assetID:formInputID,
             org:props.org
@@ -45,7 +44,7 @@ function ReadBuyRequest(props) {
         
         //cant fetch any data if everythign is not in place
         if(formData.assetID !=="" ){
-            const response = await fetch('/postReadBuyRequest',options);
+            const response = await fetch('/postDeleteBidRequest',options);
             const json = await response.json();
             setPostReply(json); 
             console.log(json);
@@ -55,14 +54,12 @@ function ReadBuyRequest(props) {
 
     };
 
-    
-
 
 
     
     return(
         <div className="container justify-content-center p-5 ">
-            <h1 className="mt-5">Read Buy Request </h1>
+            <h1 className="mt-5">Delete Bid Request</h1>
         
             <div className="form-group w-25 mx-auto">
                 <label htmlFor="assetID" className="col-form-label mx-auto">Asset ID {formInputID}</label>
@@ -76,37 +73,32 @@ function ReadBuyRequest(props) {
     
             <div className="form-group row d-block">
                 <div className="col-sm-12">
-                    <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">Read Buy Request</button>
+                    <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">Delete Bid </button>
                     {/* onClickCapture also worked */}
                 </div>
             </div>
         
     
             <div>
-                {postReply.assetID ? (
+                {postReply.success==="true" ? (
                     <div className="mx-auto container-fluid p-5">
                         <div className="d-block p-5">
-                            <h3> The buy request details: </h3>
+                            <h3> Your bid request details: </h3>
                         </div>      
                         <section>
                         
-                            <PrintBuyRequest assetID={postReply.assetID} buyerID={postReply.buyerID} buyerMSP={postReply.buyerMSP}/>
+                            <Error message="Bid request deleted successfully." backlink={back} />
                             
                         </section> 
                         <hr />
-                        <div>
-                            <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
-                        </div>
                     
                     </div>
                 ) : postReply.errorCLI ? ( 
                     <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
                 ): postReply.serverError ?(
-                    <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
-                ):postReply.exists==="false" ?(
-                    <Error message={"Request to buy for "+formInputID+" does not exist"} backlink={back} />
+                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+" for "+formInputID+"."}backlink={back}/>
                 ):(
-                    <Error message="See if there are any buy requests using assets ID" backlink={back} />
+                    <Error message="Plese enter assetID to delete its' bid request." backlink={back} />
                 )
                 }
             </div>
@@ -114,37 +106,30 @@ function ReadBuyRequest(props) {
         </div>
     );
 
+
     // var count = Object.keys(items).length;
     // console.log("this is the length ",count," this is the type of items ", typeof items, " length of items.id",items.ID)
-    // console.log("this is the size of count",count)
-    // if(items.assetID){
+    // console.log("this is the size of count",count,items)
+    // if(items.success==="true"){
     //     return(
-    //         <div className="mx-auto container-fluid p-5">
-    //             <div className="d-block p-5">
-    //                 <h3> The requesting Buyers details: </h3>
-    //             </div>      
-    //             <section>
-                  
-    //                     <PrintBuyRequest assetID={items.assetID} buyerID={items.buyerID}/>
-                    
-    //             </section> 
-    //             <hr />
-    //             <div>
-    //                 <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
-    //             </div>
-               
-    //         </div>
+            
+            
+    //         <Error message="Buy request deleted successfully." backlink={back} />
+            
+            
     //     );
     // }
 
     // return(
-    //     <Error message="Something went wrong.Request to Buy couldn't be submitted."backlink={back} />
+    //     <div>
+            
+    //         <Error message="Couldn't delete buy request. You are not the buyer." backlink={back} />
+    //     </div>
     // );
 
 
-    
 
 
 }
 
-export default ReadBuyRequest;
+export default DeleteBidRequest;

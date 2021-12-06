@@ -40,7 +40,7 @@ function GetAllAssets(props) {
     }, [props]); //dont understand this error
 
     
-
+    console.log(items.errorCLI)
 
 
 
@@ -56,7 +56,7 @@ function GetAllAssets(props) {
                 </div>      
                 <section>
                   
-                        <PrintAssets ID={items.ID} color={items.color} weight={items.weight} owner={items.owner} creator={items.creator} expirationDate={items.expirationDate} />
+                        <PrintAssets ID={items.ID} color={items.color} weight={items.weight} owner={items.owner} creator={items.creator} expirationDate={items.expirationDate} sensorData={items.sensorData} assetType={items.assetType} ownerOrg={items.ownerOrg}/>
                     
                 </section> 
                 <hr />
@@ -66,7 +66,43 @@ function GetAllAssets(props) {
                
             </div>
         );
-    }else if (count){
+    }else if (items.errorCLI==="error"){
+
+        
+             <Error message={items.errorMessage} backlink={back} />
+      
+    }else if( count){
+       
+        return (
+            <div className="d-block p-5 bg-light">
+                 <div className="d-block p-5">
+                         <h3>These are the assets </h3>
+                     </div>
+                     
+                         <div className="d-flex align-items-center 
+                  justify-content-center flex-wrap p-2 m-2 ">{items.map((item) => (
+
+                    <PrintAssets ID={item.ID} color={item.color} weight={item.weight} owner={item.owner} creator={item.creator} expirationDate={item.expirationDate} sensorData={item.sensorData}  assetType={item.assetType} ownerOrg={item.ownerOrg}/>
+                ))}
+                </div>
+                <div>
+                        <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
+                </div>
+                
+            </div>
+        );
+    }
+
+    return(
+        <Error message="Something went wrong . Couldn't read all assets available" backlink={back} />
+    );
+
+
+
+}
+
+export default GetAllAssets;
+
             //let products = null;
        
         
@@ -86,51 +122,3 @@ function GetAllAssets(props) {
             //     // </div>
             //     <PrintAssets ID={item.ID} color={item.color} weight={item.weight} owner={item.owner} creator={item.creator} expirationDate={item.expirationDate} />
             // ));
-        
-        
-        return (
-            <div className="d-block p-5 bg-light">
-                 <div className="d-block p-5">
-                         <h3>These are the assets </h3>
-                     </div>
-                     
-                         <div className="d-flex align-items-center 
-                  justify-content-center flex-wrap p-2 m-2 ">{items.map((item) => (
-
-                    <PrintAssets ID={item.ID} color={item.color} weight={item.weight} owner={item.owner} creator={item.creator} expirationDate={item.expirationDate} />
-                ))}</div>
-               
-                
-            </div>
-        );
-            // return(
-            //     <div className="mx-auto container-fluid p-5">
-            //         <div className="d-block p-5">
-            //             <h3>These are the assets </h3>
-            //         </div>      
-            //         <section>
-            //             { 
-            //             items.map(item => (
-            //                 <PrintAssets ID={item.ID} color={item.color} weight={item.weight} owner={item.owner} creator={item.creator} expirationDate={item.expirationDate} />
-            //             ))
-            //             }
-            //         </section> 
-            //         <hr />
-            //         <div>
-            //             <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
-            //         </div>
-                   
-            //     </div>
-            // );
-      
-    }
-
-    return(
-        <Error message="Something went wrong . Couldn't read all assets available" backlink={back} />
-    );
-
-
-
-}
-
-export default GetAllAssets;

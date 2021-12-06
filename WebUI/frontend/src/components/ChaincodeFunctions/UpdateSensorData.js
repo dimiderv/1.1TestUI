@@ -4,7 +4,7 @@ import Error from '../Templates/Error';
 import PrintAssets from '../Templates/PrintAssets';
 
 
-function UpdateAsset(props) {
+function UpdateSensorData(props) {
     let back;//link to go back to home page 
     if(props.org==="org1"){
        back="/farmerFrontPage"; //assigning values like this doesnt work
@@ -18,8 +18,7 @@ function UpdateAsset(props) {
   //  const [items, setItems] = useState([]);
 
     const [formInputID,setFormInputID]=useState('');
-    const [formInputWeight,setFormInputWeight]=useState('');
-    const [formInputColor,setFormInputColor]=useState('');
+    const [formInputSensor,setFormInputSensor]=useState('');
     const [postReply, setPostReply] = useState([]);
 
     useEffect( () => {     
@@ -34,8 +33,7 @@ function UpdateAsset(props) {
 
         const formData={
             assetID:formInputID,
-            weight:formInputWeight,
-            color:formInputColor,
+            sensorData:formInputSensor,
             org:props.org
         }
       
@@ -49,8 +47,8 @@ function UpdateAsset(props) {
         };  
         
         //cant fetch any data if everythign is not in place
-        if(formData.assetID !=="" && formData.weight!=="" && formData.color!==""){
-            const response = await fetch('/postUpdateAsset',options);
+        if(formData.assetID !=="" && formData.sensorData!==""){
+            const response = await fetch('/postUpdateSensorData',options);
             const json = await response.json();
             setPostReply(json); 
             console.log(json);
@@ -65,7 +63,7 @@ function UpdateAsset(props) {
 
     return(
     <div className="container justify-content-center p-5 ">
-        <h1 className="mt-5">Update Asset</h1>
+        <h1 className="mt-5">Update Sensor Data</h1>
     
         <div className="form-group w-25 mx-auto">
             <label htmlFor="assetID" className="col-form-label mx-auto">Asset ID {formInputID}</label>
@@ -77,22 +75,16 @@ function UpdateAsset(props) {
 
       
         <div className="form-group w-25 mx-auto">
-            <label htmlFor="color" className="col-form-label mx-auto">Color{formInputColor} </label>
+            <label htmlFor="sensorData" className="col-form-label mx-auto">Sensor Data {formInputSensor} </label>
             <div className="col-sm-10 mx-auto">
-            <input type="text" className="form-control" onChange={e=>setFormInputColor(e.target.value)} id="color" placeholder="color"/>
-            </div>
-        </div>
-        <div className="form-group w-25 mx-auto">
-            <label htmlFor="color" className="col-form-label mx-auto">Weight  {formInputWeight}</label>
-            <div className="col-sm-10 mx-auto">
-            <input type="number" className="form-control" onChange={e=>setFormInputWeight(e.target.value)} id="weight" placeholder="weight"/>
+            <input type="text" className="form-control" onChange={e=>setFormInputSensor(e.target.value)} id="sensorData" placeholder="Sensor Data"/>
             </div>
         </div>
 
 
         <div className="form-group row d-block">
             <div className="col-sm-12">
-                <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">Update</button>
+                <button type="submit" value="Send" onClick={fetchPostReply} className="btn btn-primary">UpdateSensorData</button>
                 {/* onClickCapture also worked */}
             </div>
         </div>
@@ -102,7 +94,7 @@ function UpdateAsset(props) {
             {postReply.ID ? (
                 <div className="mx-auto container-fluid p-5">
                     <div className="d-block p-5">
-                        <h3>You Updated {postReply.ID} with the following details: </h3>
+                        <h3>You Updated {postReply.ID} sensor data with the following details: </h3>
                     </div>      
                     <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
@@ -132,43 +124,7 @@ function UpdateAsset(props) {
 
 }
 
-export default UpdateAsset;
-
-/*Previous fetch function*/
-// let back;//link to go back to home page 
-// if(props.org==="org1"){
-//    back="/farmerFrontPage"; //assigning values like this doesnt work
-// }else if (props.org==="org2"){
-//     back="/retailerFrontPage";
-// }else{
-//     back="/supermarketFrontPage";
-// }
-// const [items, setItems] = useState([]);
-
-// useEffect( () => {
-
-//     const fetchItems = async () => {
-//         const orgLink="/";
-//         let temp;
-        
-//         if(props.org==="org1"){
-//         temp="farmerFrontPage/updateAsset";
-//         //back="/farmerFrontPage"; //assigning values like this doesnt work
-//         }else if (props.org==="org2"){
-//             temp="retailerFrontPage/updateAsset";
-//             // back="/retailerFrontPage";
-//         }else{
-//             temp="supermarketFrontPage/updateAsset";
-//         // back="/supermarketFrontPage";
-//         }
-        
-//         const data = await fetch(orgLink+temp);
-//         const items = await data.json();
-//         setItems(items);
-//     };
+export default UpdateSensorData;
 
 
-
-//     fetchItems();
-// }, [props.org]);
 

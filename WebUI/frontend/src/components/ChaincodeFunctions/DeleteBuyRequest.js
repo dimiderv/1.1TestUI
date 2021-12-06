@@ -91,15 +91,13 @@ function DeleteBuyRequest(props) {
                             
                         </section> 
                         <hr />
-                        <div>
-                            <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
-                        </div>
+
                     
                     </div>
                 ) : postReply.errorCLI ? ( 
                     <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
                 ): postReply.serverError ?(
-                    <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
+                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink={back}/>
                 ):(
                     <Error message="Plese enter assetID to delete its' buy request." backlink={back} />
                 )

@@ -22,6 +22,7 @@ function GetAssetHistory(props) {
 
     const [formInputID,setFormInputID]=useState('');
     const [postReply, setPostReply] = useState([]);
+    const [emptyFinal,setEmptyFinal]=useState('');
 
     useEffect( () => {     
         
@@ -52,26 +53,52 @@ function GetAssetHistory(props) {
             setPostReply([]);
             const response = await fetch('/postGetAssetHistory',options);
             const json = await response.json();
-            setPostReply(json); 
-            console.log(json);
+            console.log(json.empty)
+            if(json.empty==="true"){
+                console.log()
+                setPostReply(json);
+            }else{
+                let finalHistory=[];
+                let history=json;//=JSON.parse(bufferOriginal.toString('utf8'));
+                for (const i in history ) {
+                    if(history[i].isDelete===true){
+                        //flag=true
+                        break
+                    }else{
+                        finalHistory.push(history[i])
+                    }
+                    //console.log("this is final hiustory on iteration ",i ,finalHistory.reverse())
+                }
+                if(finalHistory.length){
+                    setPostReply(finalHistory.reverse());
+                }else{
+                    setEmptyFinal("empty")
+                }   
+                
+                console.log("final history ",finalHistory)
+            }
+
+            
+           
         }
  
         
 
     };
-    console.log("match",props.match);
-    
+
+   // console.log(postReply)
     var count = Object.keys(postReply).length;
-    console.log("ITEMS,",count,postReply,"ITEMS[0]",postReply[0],"ITEMS.RECORD",postReply)
+    //console.log("ITEMS,",count,postReply,"ITEMS[0]",postReply[0],"ITEMS.RECORD",postReply)
 
     return(
-        <div className="container justify-content-center p-5 ">
+        // container keeps form input small but fluid fixes cards
+        <div className="container-fluid justify-content-center p-5 ">
             <h1 className="mt-5">Get Asset History</h1>
         
             <div className="form-group w-25 mx-auto">
                 <label htmlFor="assetID" className="col-form-label mx-auto">Asset ID  {formInputID}</label>
                 {/* col-xs-3 */}
-                <div className="col-sm-10 w-10 mx-auto">
+                <div className="col-sm-10 w-50 mx-auto">
                 <input type="text" className="form-control " required onChange={e=>setFormInputID(e.target.value)} id="assetID" placeholder="asset#"/>
                 </div>
             </div>
@@ -95,7 +122,7 @@ function GetAssetHistory(props) {
                         <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
                         
-                                <PrintHistory ID={postReply[0].record.ID} color={postReply[0].record.color} weight={postReply[0].record.weight} owner={postReply[0].record.owner} creator={postReply[0].record.creator} expirationDate={postReply[0].record.expirationDate} txId={postReply[0].txId} timestamp={postReply[0].timestamp}/>
+                                <PrintHistory ID={postReply[0].record.ID} color={postReply[0].record.color} weight={postReply[0].record.weight} owner={postReply[0].record.owner} creator={postReply[0].record.creator} expirationDate={postReply[0].record.expirationDate}  sensorData={postReply[0].record.sensorData} assetType={postReply[0].record.assetType} ownerOrg={postReply[0].record.ownerOrg} txId={postReply[0].txId} timestamp={postReply[0].timestamp}/>
                             
                         </div> 
                         <hr />
@@ -112,8 +139,9 @@ function GetAssetHistory(props) {
                         <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
                             { 
+                            
                             postReply.map(item => (
-                                <PrintHistory ID={item.record.ID} color={item.record.color} weight={item.record.weight} owner={item.record.owner} creator={item.record.creator} expirationDate={item.record.expirationDate} txId={item.txId} timestamp={item.timestamp}/>
+                                <PrintHistory ID={item.record.ID} color={item.record.color} weight={item.record.weight} owner={item.record.owner} creator={item.record.creator} expirationDate={item.record.expirationDate} sensorData={item.record.sensorData} assetType={item.record.assetType} ownerOrg={item.record.ownerOrg} txId={item.txId} timestamp={item.timestamp}/>
                             ))
                             }
                         </div> 
@@ -128,7 +156,9 @@ function GetAssetHistory(props) {
                 ): postReply.serverError ?(
                     <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
                 ):formInputID.length>=6 && postReply.empty==="true"  ?(
-                    <Error message={"There is no History for asset with id=" +formInputID+ " .Asset doesn't exist."} backlink={back} />  
+                    <Error message={"There is no History for asset " +formInputID+ " .Asset doesn't exist."} backlink={back} />  
+                ): emptyFinal==="empty"?(
+                    <Error message={"There is no History for asset " +formInputID+ " .Asset doesn't exist."} backlink={back} />  
                 ):(
                     <Error message="Plese enter assetID for deletion or go back" backlink={back} />
                 )

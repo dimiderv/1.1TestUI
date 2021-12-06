@@ -38,13 +38,13 @@ function Home() {
                     </div>
                 </div>
 
-                    <div className="card">
-                        <img className="card-img-top" src={supermarketImage} alt=""/>
-                        <div className="card-body">
-                            <h6 className="card-title">SuperMarket</h6>
-                            <p className="card-text ">Use the App as a supermarket employee</p>
-                            <p className="text-center"><a href="/supermarketFrontPage" className="btn btn-small btn-primary">Log In</a></p>
-                        </div>
+                <div className="card">
+                    <img className="card-img-top" src={supermarketImage} alt=""/>
+                    <div className="card-body">
+                        <h6 className="card-title">SuperMarket</h6>
+                        <p className="card-text ">Use the App as a supermarket employee</p>
+                        <p className="text-center"><a href="/supermarketFrontPage" className="btn btn-small btn-primary">Log In</a></p>
+                    </div>
                     </div>
                 </div> 
             </div> 

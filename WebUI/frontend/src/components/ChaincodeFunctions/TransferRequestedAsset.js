@@ -18,7 +18,6 @@ function TransferRequestedAsset(props) {
 
 
     const [formInputID,setFormInputID]=useState('');
-    const [formInputBuyerMSP,setFormInputBuyerMSP]=useState('');
     const [postReply, setPostReply] = useState([]);
    
 
@@ -35,7 +34,6 @@ function TransferRequestedAsset(props) {
         fetchAttempt= !fetchAttempt;
         const formData={
             assetID:formInputID,
-            buyerMSP:formInputBuyerMSP,
             org:props.org,
             
         }
@@ -75,13 +73,6 @@ function TransferRequestedAsset(props) {
                 </div>
             </div>
     
-          
-            <div className="form-group w-25 mx-auto">
-                <label htmlFor="color" className="col-form-label mx-auto">BuyerMSP{formInputBuyerMSP} </label>
-                <div className="col-sm-10 mx-auto">
-                <input type="text" className="form-control" onChange={e=>setFormInputBuyerMSP(e.target.value)} id="color" placeholder="Org#MSP"/>
-                </div>
-            </div>
 
     
             <div className="form-group row d-block">
@@ -98,11 +89,12 @@ function TransferRequestedAsset(props) {
                         <div className="d-block p-5">
                             <h3>You transfered {postReply.ID} to {postReply.owner}: </h3>
                         </div>      
-                        <section>
+                        <div className="d-flex align-items-center 
+                  justify-content-center flex-wrap p-2 m-2 ">
                         
-                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} />
+                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} assetType={postReply.assetType} ownerOrg={postReply.ownerOrg} />
                             
-                        </section> 
+                        </div> 
                         <hr />
                         <div>
                             <p className="text-center d-block"><a href={back} className="btn btn-small btn-primary" >Go back</a></p>
@@ -110,7 +102,7 @@ function TransferRequestedAsset(props) {
                     
                     </div>
                     ) : postReply.errorCLI ? ( 
-                        <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink="farmerFrontPage" />
+                        <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink={back} />
                     ): postReply.serverError ?(
                         <Error message={postReply.serverError+" "+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
                     ):(

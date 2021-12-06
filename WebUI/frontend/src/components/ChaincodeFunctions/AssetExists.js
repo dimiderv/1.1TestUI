@@ -93,7 +93,7 @@ function AssetExists(props) {
                         <div className="d-flex align-items-center 
                   justify-content-center flex-wrap p-2 m-2 ">
                         
-                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} />
+                                <PrintAssets ID={postReply.ID} color={postReply.color} weight={postReply.weight} owner={postReply.owner} creator={postReply.creator} expirationDate={postReply.expirationDate} sensorData={postReply.sensorData} ownerOrg={postReply.ownerOrg} assetType={postReply.assetType}/>
                             
                         </div> 
                         <hr />
@@ -107,7 +107,7 @@ function AssetExists(props) {
                 ): postReply.serverError ?(
                     <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
                 ):(
-                    <Error message="Plese enter assetID for deletion or go back" backlink={back} />
+                    <Error message="Plese enter assetID to search or go back" backlink={back} />
                 )
                 }
             </div>

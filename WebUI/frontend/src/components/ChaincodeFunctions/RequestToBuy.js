@@ -88,7 +88,7 @@ function RequestToBuy(props) {
                         </div>      
                         <section>
                         
-                                <PrintBuyRequest assetID={postReply.assetID} buyerID={postReply.buyerID}/>
+                                <PrintBuyRequest assetID={postReply.assetID} buyerID={postReply.buyerID} buyerMSP={postReply.buyerMSP}/>
                             
                         </section> 
                         <hr />
@@ -98,7 +98,7 @@ function RequestToBuy(props) {
                     
                     </div>
                 ) : postReply.errorCLI ? ( 
-                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage+"."}backlink={back} />
+                    <Error message={" Error with status "+postReply.errorStatus+". "+postReply.errorMessage[0].toUpperCase()+postReply.errorMessage.slice(1)+"."}backlink={back} />
                 ): postReply.serverError ?(
                     <Error message={postReply.serverError+postReply.errorStatus+". "+postReply.errorMessage} backlink={back} />
                 ):(

@@ -23,11 +23,15 @@ function PrintAssets(props) {
         <div className="col-sm">
             <div className="card-body ">
                 <h4 className="card-header mb-2"> {props.ID} </h4>
-                <p className="card-text "> Color : {props.color}. </p>
-                <p className="card-text"> Weight (Kg) : {props.weight}. </p>
-                <p className="card-text"> Owner : {props.owner}. </p>
-                <p className="card-text "> Creator : {props.creator}. </p>
-                <p className="card-text"> Exiration : {props.expirationDate}. </p>
+                <p className="card-text"> Asset Type : {props.assetType} </p>
+                <p className="card-text "> Color : {props.color} </p>
+                <p className="card-text"> Weight (Kg) : {props.weight} </p>
+                <p className="card-text"> Owner : {props.owner} </p>
+                <p className="card-text"> Owner Org : {props.ownerOrg} </p>
+                <p className="card-text "> Creator : {props.creator} </p>
+                <p className="card-text"> Exiration : {props.expirationDate} </p>
+                <p className="card-text"> Sensor Data : {props.sensorData} </p>
+                
                 <button className="btn btn-primary"> View </button>
             </div>
         </div>

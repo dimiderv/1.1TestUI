@@ -19,16 +19,16 @@ import fruits from '../images/fruits.jpg'
 //     };
 
     return(
-        <section>
+        <section className="mainPage">
 
             {/* <!-- Slider --> */}
             <div className="carousel slide" id="mainSlide">
                 <div className="carousel-inner">
                     <div className="carousel-item active">
-                        <img className="w-100 d-block"src={corn} alt=""/>
+                        <img className="mw-100  mx-auto mh-50 d-block"src={corn} alt=""/>
                     </div>
                     <div className="carousel-item">
-                        <img className="w-100 d-block"src={fruits} alt=""/>
+                        <img className="mw-100  mx-auto mh-50 d-block"src={fruits} alt=""/>
                     </div>
                     <a className="carousel-control-prev" href="#mainSlide" role="button" data-slide="prev">
                         <span className="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,7 +47,7 @@ import fruits from '../images/fruits.jpg'
                 <h1 className="bg-light p-5" id="projectAnchor">Transactions </h1>
                 
                 {/* <!-- cards --> */}
-                <div className="card-deck">
+                <div className="card-deck transaction-cards">
 
 
 
@@ -59,6 +59,15 @@ import fruits from '../images/fruits.jpg'
 
                         </div>
                         <p className="text-center"><a href="/retailerFrontPage/updateAsset" className="btn btn-small btn-primary" >Update</a></p>
+                    </div>
+                    <div className="card ">
+                        <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
+                        <div className="card-body">
+                            <h6 className="card-title">Update Sensor Data</h6>
+                            <p className="card-text ">Update sensor</p>
+
+                        </div>
+                        <p className="text-center"><a href="/retailerFrontPage/updateSensorData" className="btn btn-small btn-primary" >Update Sensor</a></p>
                     </div>
                     <div className="card">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
@@ -73,10 +82,19 @@ import fruits from '../images/fruits.jpg'
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Delete Buy Request</h6>
-                            <p className="card-text ">Delete the buy Request after asset transfer.Otherwise you delete the request and Farmer can't see it</p>
+                            <p className="card-text ">Delete the buy Request after asset transfer.</p>
 
                         </div>
                         <p className="text-center"><a href="/retailerFrontPage/deleteBuyRequest" className="btn btn-small btn-primary" >Delete Buy Request</a></p>
+                    </div>
+                    <div className="card">
+                        <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
+                        <div className="card-body">
+                            <h6 className="card-title">Delete Bid Request</h6>
+                            <p className="card-text ">Delete the bid Request after asset transfer.</p>
+
+                        </div>
+                        <p className="text-center"><a href="/retailerFrontPage/deleteBidRequest" className="btn btn-small btn-primary" >Delete Bid </a></p>
                     </div>
                     <div className="card ">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
@@ -96,7 +114,7 @@ import fruits from '../images/fruits.jpg'
                         </div>
                         <p className="text-center"><a href="/retailerFrontPage/agreeToBuy" className="btn btn-small btn-primary" >Agree To Buy</a></p>
                     </div>
-                    <div className="card bg-danger">
+                    <div className="card">
                         <img className="card-img-top" src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Set Price for an asset</h6>
@@ -106,7 +124,7 @@ import fruits from '../images/fruits.jpg'
                         <p className="text-center"><a href="/retailerFrontPage/setPrice" className="btn btn-small btn-primary" >Set Price</a></p>
                     </div>
 
-                    <div className="card bg-danger">
+                    <div className="card">
                         <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Transfer Asset</h6>
@@ -123,10 +141,10 @@ import fruits from '../images/fruits.jpg'
                 <h1 className="bg-light p-5" id="queriesAnchor">Queries</h1>
                 
                 {/* <!-- cards --> */}
-                <div className="card-deck">
+                <div className="card-deck query-cards">
 
                    
-                    <div className="card bg-danger">
+                    <div className="card ">
                         <img className="card-img-top " src="./images/projects-macbook-stats.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Search Asset</h6>
@@ -145,7 +163,7 @@ import fruits from '../images/fruits.jpg'
                         <p className="text-center"><a href="/retailerFrontPage/readAsset" className="btn btn-small btn-primary">Read Asset</a></p>
                     </div>
 
-                    <div className="card bg-danger">
+                    <div className="card ">
                         <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Read buy request</h6>
@@ -154,7 +172,18 @@ import fruits from '../images/fruits.jpg'
                         </div>
                         <p className="text-center"><a href="/retailerFrontPage/readBuyRequest" className="btn btn-small btn-primary" >Read Request</a></p>
                     </div>
-                    <div className="card bg-danger">
+
+                    <div className="card ">
+                        <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
+                        <div className="card-body">
+                            <h6 className="card-title">Read asset price</h6>
+                            <p className="card-text ">You can Read asset price from shared collection with farmer</p>
+
+                        </div>
+                        <p className="text-center"><a href="/retailerFrontPage/readAssetPrice" className="btn btn-small btn-primary" >Read Price</a></p>
+                    </div>
+
+                    <div className="card ">
                         <img className="card-img-top" src="./images/projects-robodog.jpg" alt=""/>
                         <div className="card-body">
                             <h6 className="card-title">Asset History</h6>
