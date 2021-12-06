@@ -23,4 +23,7 @@ In the app folder there are 2 working apps.
 
 
 ### The UI of farmer front page
-[![solarized dualmode](https://github.com/altercation/solarized/raw/master/img/solarized-yinyang.png)]
+[![farmer front page](https://github.com/dimiderv/1.1TestUI/blob/main/images/farmerFrontPage.png)]
+
+### Create Asset
+[![createAsset](https://github.com/dimiderv/1.1TestUI/blob/main/images/createAsset.png)]
