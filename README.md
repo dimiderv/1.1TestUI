@@ -20,3 +20,7 @@ Front End and backend is located on folder WebUI.
 In the app folder there are 2 working apps. 
  1. appOrg3.js where orgs use a shared collection to put buy requests
  2. sharedCollection.js where orgs use shared collections between them
+
+
+### The UI of farmer front page
+[![solarized dualmode](https://github.com/altercation/solarized/raw/master/img/solarized-yinyang.png)]
