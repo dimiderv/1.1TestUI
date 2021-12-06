@@ -26,4 +26,4 @@ In the app folder there are 2 working apps.
 ![farmer front page](https://github.com/dimiderv/1.1TestUI/blob/main/images/farmerFrontPage.png)
 
 ### Create Asset
-[![createAsset](https://github.com/dimiderv/1.1TestUI/blob/main/images/createAsset.png)]
+![createAsset](https://github.com/dimiderv/1.1TestUI/blob/main/images/createAsset.png)
