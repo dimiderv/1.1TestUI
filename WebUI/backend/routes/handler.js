@@ -138,7 +138,7 @@ let randomNumber=1;
 router.get('/initLedger', async (req, res) => {
 
 
-
+//Make this show the assets as they should not in a column but as a flex wrap
     try {
 
 
@@ -176,6 +176,7 @@ router.post('/createAssetData', async (req, res) => {
         const newAsset=req.body.assetID;
         const newColor=req.body.color;
         const newWeight=parseInt(req.body.weight);
+        const assetType=req.body.assetType;
         console.log(newAsset,newColor,newWeight);
         /** ******* Fabric client init: Using Org1 identity to Org1 Peer ********** */
         const gatewayOrg1 = await initContractFromOrg1Identity();
@@ -186,7 +187,7 @@ router.post('/createAssetData', async (req, res) => {
 
         statefulTxn = contractOrg1.createTransaction('CreateAsset');
         statefulTxn.setEndorsingOrganizations(mspOrg1);
-        result = await statefulTxn.submit(newAsset,newColor,newWeight);
+        result = await statefulTxn.submit(newAsset,newColor,newWeight,assetType);
         console.log(" Asset Was created. Public details should be present !");
         result = await contractOrg1.evaluateTransaction('ReadAsset',newAsset)//'asset1');
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
@@ -289,6 +290,78 @@ router.post('/postUpdateAsset', async function  (req,res) {
 }
 );
 
+/**Update sensor data  */
+router.post('/postUpdateSensorData', async function  (req,res) {
+    console.log("post Update of sensor data");
+    try {
+
+        const newAsset=req.body.assetID;
+        const newSensorData=req.body.sensorData;
+        const org=req.body.org;
+        let  gatewayOrg;
+        let networkOrg;
+        let contractOrg;
+        let mspOrg;
+        console.log(newAsset,newColor,newWeight,org==="org1");
+        if(org==="org1"){
+            gatewayOrg = await initContractFromOrg1Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg1;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
+        
+        }else if (org==="org2"){
+            gatewayOrg = await initContractFromOrg2Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg2;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
+        }else if(org==="org3"){
+
+            gatewayOrg = await initContractFromOrg3Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg3;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
+
+        
+        }else{
+            console.log("No org was given. Can't connect to any profiles");
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"No org was given. Can't connect to any profiles",
+                        errorStatus:404
+    
+                    })));
+        }
+
+        statefulTxn = contractOrg.createTransaction('UpdateSensorData');
+        statefulTxn.setEndorsingOrganizations(mspOrg);
+        result = await statefulTxn.submit(newAsset,newSensorData);
+        console.log(`Asset was updated`);
+        result = await contractOrg.evaluateTransaction('ReadAsset',newAsset);
+        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        res.end(result);
+       
+
+        gatewayOrg.disconnect;
+    } catch (error) {
+        console.error(`Failed to Update Asset : ${error}`);
+        // res.end(Buffer.from(error));
+       
+        res.end( Buffer.from(
+            JSON.stringify(
+                {
+                    errorCLI:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status 
+    
+                })));
+    }
+}
+);
 
 
 /**Delete Asset  */
@@ -383,7 +456,204 @@ router.post('/postDeleteAsset', async function  (req,res) {
 }
 );
 
+/**Delete Buy Request */
+router.post('/postDeleteBuyRequest',async function (req,res) {
+    
+    try{
+        
+        const assetToDeleteBuyRequest=req.body.assetID;
+        const org=req.body.org;
+        let  gatewayOrg;
+        let networkOrg;
+        let contractOrg;
+        let mspOrg;
+        console.log(assetToDeleteBuyRequest,org);
+        // if(org==="org1"){
+        //     gatewayOrg = await initContractFromOrg1Identity();
+        //     networkOrg = await gatewayOrg.getNetwork(channelName);
+        //     contractOrg = networkOrg.getContract(chaincodeName);
+        //     mspOrg=mspOrg1;
+        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
+        
+        //}else 
+        if (org==="org2"){
+            gatewayOrg = await initContractFromOrg2Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg2;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
+            console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetToDeleteBuyRequest);
+            statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
+            statefulTxn.setEndorsingOrganizations(mspOrg);
+            result = await statefulTxn.submit(assetToDeleteBuyRequest,assetCollection);
+        }else if(org==="org3"){
 
+            gatewayOrg = await initContractFromOrg3Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg3;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
+            console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetToDeleteBuyRequest);
+            statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
+            statefulTxn.setEndorsingOrganizations(mspOrg);
+            result = await statefulTxn.submit(assetToDeleteBuyRequest,sharedCollectionOrg2Org3);
+
+            
+        }else{
+            console.log("No org was given. Can't connect to any profiles");
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"No org was given. Can't connect to any profiles",
+                        errorStatus:404
+    
+                    })));
+        }
+
+
+
+        let temp,objSent;
+        // console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetID);
+        // statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
+        // statefulTxn.setEndorsingOrganizations(mspOrg);
+        // result = await statefulTxn.submit(assetID,assetCollection);
+        temp={
+            success:"true"
+        }
+        // result = await contractOrg2.evaluateTransaction('ReadRequestToBuy', assetID,assetCollection);
+        // console.log(`*** Result: ${(result.toString())}`);
+        console.log("successfully delete buiy request");
+        objSent=Buffer.from(JSON.stringify(temp))
+        res.end(objSent);
+        
+
+    }catch(error){
+        console.error(`Couldnt delete buy request ${error}`);
+        res.end( Buffer.from(
+            JSON.stringify(
+                {
+                    serverError:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status 
+    
+                })));
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             serverError:"error",
+        //             errorMessage:"Cannot Delete buy request.",
+        //             errorStatus:404
+
+        //         })));
+
+
+
+                
+    }
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             errorCLI:"error",
+        //             errorMessage:error.responses[0].response.message,
+        //             errorStatus:error.responses[0].response.status
+
+        //         })));
+    }
+
+
+);
+
+
+/**Delete bid from implicit collection. Might have to implement a receipt*/
+router.post('/postDeleteBidRequest',async function (req,res) {
+    
+    try{
+        
+        const assetToDeleteBidRequest=req.body.assetID;
+        const org=req.body.org;
+        let  gatewayOrg;
+        let networkOrg;
+        let contractOrg;
+        let mspOrg;
+        console.log(assetToDeleteBidRequest,org);
+        // if(org==="org1"){
+        //     gatewayOrg = await initContractFromOrg1Identity();
+        //     networkOrg = await gatewayOrg.getNetwork(channelName);
+        //     contractOrg = networkOrg.getContract(chaincodeName);
+        //     mspOrg=mspOrg1;
+        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
+        
+        //}else 
+        if (org==="org2"){
+            gatewayOrg = await initContractFromOrg2Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg2;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
+
+        }else if(org==="org3"){
+
+            gatewayOrg = await initContractFromOrg3Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg3;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
+
+
+            
+        }else{
+            console.log("No org was given. Can't connect to any profiles");
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"No org was given. Can't connect to any profiles",
+                        errorStatus:404
+    
+                    })));
+        }
+
+
+
+        let temp,objSent;
+        result = await contractOrg.evaluateTransaction('GetAssetBidPrice', assetToDeleteBidRequest);
+        console.log('\n--> Submit Transaction: DeleteBidRequest ' + assetToDeleteBidRequest);
+        statefulTxn = contractOrg.createTransaction('DeleteBidRequest');
+        statefulTxn.setEndorsingOrganizations(mspOrg);
+        result = await statefulTxn.submit(assetToDeleteBidRequest);
+        temp={
+            success:"true"
+        }
+
+        console.log("successfully deleted bid request");
+        objSent=Buffer.from(JSON.stringify(temp))
+        res.end(objSent);
+        
+
+    }catch(error){
+        console.error(`Couldnt delete bid request ${error}`);
+        res.end( Buffer.from(
+            JSON.stringify(
+                {
+                    serverError:"error",
+                    errorMessage:"Bid price does not exist",//error.responses[0].response.message,
+                    errorStatus:500,//error.responses[0].response.status 
+                    errorTemp:error
+                })));
+    }
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             errorCLI:"error",
+        //             errorMessage:error.responses[0].response.message,
+        //             errorStatus:error.responses[0].response.status
+
+        //         })));
+    }
+
+
+);
 
 /**Asset Exists  */
 router.post('/postAssetExists', async function  (req,res) {
@@ -451,7 +721,7 @@ router.post('/postAssetExists', async function  (req,res) {
                     {
                         errorCLI:"error",
                         errorMessage:"Asset doesn't exist",
-                        errorStatus:404
+                        errorStatus:500
     
                     })));
         }
@@ -565,8 +835,25 @@ router.get('/farmerFrontPage/getAllAssets', async function  (req,res) {
 
 
         result = await contractOrg1.evaluateTransaction('GetAllAssets')
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-        res.end(result);//.toString()
+        let flag=(result.toString()==="");
+        console.log(`Transaction has been evaluated, result is: ${result.toString()} and flag is ${flag}`);
+        //might have to delete
+        
+        if(flag){
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"World State is empty.",
+                        errorStatus:500
+    
+                    })));
+            //the asset can be read
+            
+        }else{
+            res.end(result);
+        }
+        //res.end(result);//.toString()
         // Disconnect from the gateway.
         gatewayOrg1.disconnect;
     } catch (error) {
@@ -760,7 +1047,8 @@ router.post('/postSetPrice',async function (req,res){
         const asset_price = {
             asset_id: assetToSell,
             price: priceToSell,
-            trade_id: tradeId
+            trade_id: tradeId,
+            salt: Buffer.from(tradeId).toString('hex')
         };
         const asset_price_string =  Buffer.from(JSON.stringify(asset_price));
         console.log(`--> Submit Transaction: setPrice, ${assetToSell} as ${org} - endorsed by ${org}`);
@@ -787,18 +1075,109 @@ router.post('/postSetPrice',async function (req,res){
         res.end( Buffer.from(
             JSON.stringify(
                 {
-                    errorCLI:"error",
-                    errorMessage:"Couldn't complete transaction.",
-                    errorStatus:500
-
+                    serverError:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status 
+    
                 })));
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             errorCLI:"error",
+        //             errorMessage:"Couldn't complete transaction.",
+        //             errorStatus:500
+
+        //         })));
     }
 
 });
 
 
 
+/**Agree To Buy can be done only from Org2 and 3, client not implemented yet */
+router.post('/postAgreeToBuy',async function (req,res) {
+    
+    try{
+        
+        const assetToBuy=req.body.assetID;
+        const org=req.body.org;
+        let  gatewayOrg;
+        let networkOrg;
+        let contractOrg;
+        let mspOrg;
+        console.log(assetToBuy,org);
+        // if(org==="org1"){
+        //     gatewayOrg = await initContractFromOrg1Identity();
+        //     networkOrg = await gatewayOrg.getNetwork(channelName);
+        //     contractOrg = networkOrg.getContract(chaincodeName);
+        //     mspOrg=mspOrg1;
+        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
+        
+        //}else 
+        if (org==="org2"){
+            gatewayOrg = await initContractFromOrg2Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg2;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
+        }else if(org==="org3"){
 
+            gatewayOrg = await initContractFromOrg3Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg3;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
+
+            
+        }else{
+            console.log("No org was given. Can't connect to any profiles");
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"No org was given. Can't connect to any profiles",
+                        errorStatus:404
+    
+                    })));
+        }
+
+
+        console.log(`===========Here we are going to AgreeToBuy as ${org}===================`);
+        // Agree to a buy by Org2
+		console.log(`--> Submit Transaction: AgreeToBuy, ${assetToBuy} as ${org} - endorsed by  ${org}`);
+		transaction = contractOrg.createTransaction('AgreeToBuy');
+		transaction.setEndorsingOrganizations(mspOrg);//mspOrg1
+		await transaction.submit(assetToBuy);
+		console.log(`*** Result: committed, ${org} has agreed to buy asset ${assetToBuy}`);
+
+
+        console.log('\n--> Evaluate Transaction: GetAssetBidPrice ' + assetToBuy);
+        result = await contractOrg.evaluateTransaction('GetAssetBidPrice', assetToBuy);
+        console.log(result)
+        res.end(result);
+
+    }catch(error){
+        console.error(`Couldnt tranfer requested asset ${error}`);
+        res.end( Buffer.from(
+            JSON.stringify(
+                {
+                    serverError:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status 
+    
+                })));
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             serverError:"error",
+        //             errorMessage:"Cannot read buy request.",
+        //             errorStatus:404
+
+        //         })));
+    }
+}
+
+);
 
 
 
@@ -868,7 +1247,7 @@ router.post('/postRequestToBuy',async function (req,res) {
             if(flag){
                 result = await contractOrg.evaluateTransaction('ReadRequestToBuy', assetToBuy,assetCollection);
             }else{
-                            result = await contractOrg.evaluateTransaction('ReadRequestToBuy', assetToBuy,sharedCollectionOrg2Org3);
+                result = await contractOrg.evaluateTransaction('ReadRequestToBuy', assetToBuy,sharedCollectionOrg2Org3);
             }
 
             console.log(result.toString())
@@ -888,28 +1267,109 @@ router.post('/postRequestToBuy',async function (req,res) {
     
     }catch(error){
         console.error(`failed to create buy request ${error}`);
+        // res.end( Buffer.from(
+        //     JSON.stringify(
+        //         {
+        //             serverError:"Error occured with status: ",
+        //             errorMessage:" Server Unavailable",
+        //             errorStatus:500,
+        //             errorTemp:error
+
+        //         })));
         res.end( Buffer.from(
             JSON.stringify(
                 {
-                    serverError:"Error occured with status: ",
-                    errorMessage:" Server Unavailable",
-                    errorStatus:500,
-                    errorTemp:error
+                    errorCLI:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status
 
                 })));
+
     }
+    
 
 });
 
+/** Transfer Requested asset. It's available only for Farmers and retailers. Client supermarket not implemented yet */
 
+router.post('/postTransferRequestedAsset',async function (req,res) {
+    
+    try{
+        const assetToTransfer=req.body.assetID;
+        const org=req.body.org;
+        let  gatewayOrg;
+        let networkOrg;
+        let contractOrg;
+        let mspOrg;
+        console.log(assetToTransfer,org);
+        if(org==="org1"){
+            gatewayOrg = await initContractFromOrg1Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg1;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
+        
+        }else if (org==="org2"){
+            gatewayOrg = await initContractFromOrg2Identity();
+            networkOrg = await gatewayOrg.getNetwork(channelName);
+            contractOrg = networkOrg.getContract(chaincodeName);
+            mspOrg=mspOrg2;
+            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
+         //}else if(org==="org3"){
+
+        //     gatewayOrg = await initContractFromOrg3Identity();
+        //     networkOrg = await gatewayOrg.getNetwork(channelName);
+        //     contractOrg = networkOrg.getContract(chaincodeName);
+        //     mspOrg=mspOrg3;
+        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
+
+            
+        }else{
+            console.log("No org was given. Can't connect to any profiles");
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        errorCLI:"error",
+                        errorMessage:"No org was given. Can't connect to any profiles",
+                        errorStatus:404
+    
+                    })));
+        }
+
+        console.log('\n--> Submit Transaction: TransferRequestedAsset ' + assetToTransfer);
+        statefulTxn = contractOrg.createTransaction('TransferRequestedAsset');
+        statefulTxn.setEndorsingOrganizations(mspOrg);
+        result = await statefulTxn.submit(assetToTransfer);
+
+        console.log(`\n--> We are going to read asset after it has been transfered}`);
+        result = await contractOrg.evaluateTransaction('ReadAsset', assetToTransfer);
+        console.log(`*** Result: ${(result.toString())}`);
+        res.end(result);
+
+    }catch(error){
+        //better error handling !!!!
+        //better messages
+        console.error(`Couldnt tranfer requested asset ${error}`);
+        res.end( Buffer.from(
+            JSON.stringify(
+                {
+                    errorCLI:"error",
+                    errorMessage:error.responses[0].response.message,
+                    errorStatus:error.responses[0].response.status
+
+                })));
+    }
+}
+
+);
 
 
 /** Read Buy Request ,might have to add relation of client and supermarket,
- * Only org1 and org2 can do this
+ * Only org1 and org2 can do this, maybe org3 can do it for it's own buy request?
 */
 router.post('/postReadBuyRequest',async function (req,res) {
     try{
-
+        console.log("gets in read buy request");
         const assetToReadBuyRequest=req.body.assetID;
         const org=req.body.org;
         let  gatewayOrg;
@@ -953,8 +1413,20 @@ router.post('/postReadBuyRequest',async function (req,res) {
                     })));
         }
         console.log('\n~~~~~~~~~~~~~~~ Reading Request To Buy ');
-        console.log(result.toString())
-        res.end(result)
+        console.log(result.toString()==="",result)
+        if(result.toString()===""){
+            res.end( Buffer.from(
+                JSON.stringify(
+                    {
+                        exists:"false",
+                        errorMessage:"Buy Request couldn't be found.",
+                        errorStatus:404
+    
+                    })));
+        }else{
+            res.end(result)
+        }
+        
     
     }catch(error){
         console.error(`failed to read buy request ${error}`);
@@ -972,220 +1444,49 @@ router.post('/postReadBuyRequest',async function (req,res) {
 
 
 
-/**Agree To Buy can be done only from Org2 and 3, client not implemented yet */
-router.post('/postAgreeToBuy',async function (req,res) {
-    
+/** ReadAssetPrice ,might have to add relation of client and supermarket,
+ * Org2 and Org3 have to use it to see if there is a price for an asset that they want to buy.
+ * It's going to be used only to see if a price is available when orgs are buyers. That's why
+ * Org2 looks for it on the shared asset collection with org1 , and org3 looks for shared 
+ * collection on org3 and org2 one. Org2 could read from org2 and org3 collection but there is no need for that since in that scenarion org2 is the seller and has the price in it's implicit data collection
+*/
+router.post('/postReadAssetPrice',async function (req,res) {
     try{
-        
-        const assetToBuy=req.body.assetID;
-        const priceToAgree=parseInt(req.body.price);//need integer for it
-        const tradeId=req.body.tradeID;
+
+        const assetToReadPrice=req.body.assetID;
         const org=req.body.org;
         let  gatewayOrg;
         let networkOrg;
         let contractOrg;
         let mspOrg;
-        console.log(assetToBuy,priceToAgree,tradeId,org);
-        // if(org==="org1"){
-        //     gatewayOrg = await initContractFromOrg1Identity();
-        //     networkOrg = await gatewayOrg.getNetwork(channelName);
-        //     contractOrg = networkOrg.getContract(chaincodeName);
-        //     mspOrg=mspOrg1;
-        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
-        
-        //}else 
-        if (org==="org2"){
-            gatewayOrg = await initContractFromOrg2Identity();
-            networkOrg = await gatewayOrg.getNetwork(channelName);
-            contractOrg = networkOrg.getContract(chaincodeName);
-            mspOrg=mspOrg2;
-            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
-        }else if(org==="org3"){
-
-            gatewayOrg = await initContractFromOrg3Identity();
-            networkOrg = await gatewayOrg.getNetwork(channelName);
-            contractOrg = networkOrg.getContract(chaincodeName);
-            mspOrg=mspOrg3;
-            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
-
-            
-        }else{
-            console.log("No org was given. Can't connect to any profiles");
-            res.end( Buffer.from(
-                JSON.stringify(
-                    {
-                        errorCLI:"error",
-                        errorMessage:"No org was given. Can't connect to any profiles",
-                        errorStatus:404
-    
-                    })));
-        }
-
-
-        console.log(`===========Here we are going to AgreeToBuy as ${org}===================`);
-        // Agree to a buy by Org2
-		const asset_price = {
-			asset_id: assetToBuy,
-			price: priceToAgree,
-			trade_id: tradeId
-		};
-		const asset_price_string = JSON.stringify(asset_price);
-		console.log(`--> Submit Transaction: AgreeToBuy, ${assetToBuy} as ${org} - endorsed by  ${org}`);
-		transaction = contractOrg.createTransaction('AgreeToBuy');
-		transaction.setEndorsingOrganizations(mspOrg);//mspOrg1
-		transaction.setTransient({
-			asset_price: Buffer.from(asset_price_string)
-		});
-		await transaction.submit(assetToBuy);
-		console.log(`*** Result: committed, ${org} has agreed to buy asset ${assetToBuy} for ${priceToAgree}`);
-
-
-        console.log('\n--> Evaluate Transaction: GetAssetBidPrice ' + assetToBuy);
-        result = await contractOrg.evaluateTransaction('GetAssetBidPrice', assetToBuy);
-        console.log(result)
-        res.end(result);
-
-    }catch(error){
-        console.error(`Couldnt tranfer requested asset ${error}`);
-        res.end( Buffer.from(
-            JSON.stringify(
-                {
-                    serverError:"error",
-                    errorMessage:"Cannot read buy request.",
-                    errorStatus:404
-
-                })));
-    }
-}
-
-);
-
-
-
-
-/** Transfer Requested asset. It's available only for Farmers and retailers. Client supermarket not implemented yet */
-
-router.post('/postTransferRequestedAsset',async function (req,res) {
-    
-    try{
-        const assetToTransfer=req.body.assetID;
-        const org=req.body.org;
-        const buyerMSP=req.body.buyerMSP;
-        let buyerDetails = { assetID: assetToTransfer, buyerMSP: buyerMSP };
-        let  gatewayOrg;
-        let networkOrg;
-        let contractOrg;
-        let mspOrg;
-        console.log(assetToTransfer,org,buyerDetails);
+        let temp;
+        //Console log of parameters
+        console.log(assetToReadPrice,org);
         if(org==="org1"){
             gatewayOrg = await initContractFromOrg1Identity();
             networkOrg = await gatewayOrg.getNetwork(channelName);
             contractOrg = networkOrg.getContract(chaincodeName);
             mspOrg=mspOrg1;
             contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
-        
+            result = await contractOrg.evaluateTransaction('ReadAssetPrice', assetToReadPrice,assetCollection);
+            temp=assetCollection;
         }else if (org==="org2"){
             gatewayOrg = await initContractFromOrg2Identity();
             networkOrg = await gatewayOrg.getNetwork(channelName);
             contractOrg = networkOrg.getContract(chaincodeName);
             mspOrg=mspOrg2;
             contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
-         //}else if(org==="org3"){
-
-        //     gatewayOrg = await initContractFromOrg3Identity();
-        //     networkOrg = await gatewayOrg.getNetwork(channelName);
-        //     contractOrg = networkOrg.getContract(chaincodeName);
-        //     mspOrg=mspOrg3;
-        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
-
-            
-        }else{
-            console.log("No org was given. Can't connect to any profiles");
-            res.end( Buffer.from(
-                JSON.stringify(
-                    {
-                        errorCLI:"error",
-                        errorMessage:"No org was given. Can't connect to any profiles",
-                        errorStatus:404
-    
-                    })));
-        }
-
-        console.log('\n--> Submit Transaction: TransferRequestedAsset ' + assetToTransfer);
-        statefulTxn = contractOrg.createTransaction('TransferRequestedAsset');
-        let tmapData = Buffer.from(JSON.stringify(buyerDetails));
-        statefulTxn.setEndorsingOrganizations(mspOrg);
-        statefulTxn.setTransient({
-            asset_owner: tmapData
-        });
-        result = await statefulTxn.submit();
-
-        console.log(`\n--> We are going to read privateAssetAfter after transfer to ${buyerMSP}`);
-        result = await contractOrg.evaluateTransaction('ReadAsset', assetToTransfer);
-        console.log(`*** Result: ${(result.toString())}`);
-        res.end(result);
-
-    }catch(error){
-        //better error handling !!!!
-        //better messages
-        console.error(`Couldnt tranfer requested asset ${error}`);
-        res.end( Buffer.from(
-            JSON.stringify(
-                {
-                    errorCLI:"error",
-                    errorMessage:error.responses[0].response.message,
-                    errorStatus:error.responses[0].response.status
-
-                })));
-    }
-}
-
-);
-
-
-
-/**Delete Buy Request */
-router.post('/postDeleteBuyRequest',async function (req,res) {
-    
-    try{
-        
-        const assetToDeleteBuyRequest=req.body.assetID;
-        const org=req.body.org;
-        let  gatewayOrg;
-        let networkOrg;
-        let contractOrg;
-        let mspOrg;
-        console.log(assetToBuy,org);
-        // if(org==="org1"){
-        //     gatewayOrg = await initContractFromOrg1Identity();
-        //     networkOrg = await gatewayOrg.getNetwork(channelName);
-        //     contractOrg = networkOrg.getContract(chaincodeName);
-        //     mspOrg=mspOrg1;
-        //     contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection] });
-        
-        //}else 
-        if (org==="org2"){
-            gatewayOrg = await initContractFromOrg2Identity();
-            networkOrg = await gatewayOrg.getNetwork(channelName);
-            contractOrg = networkOrg.getContract(chaincodeName);
-            mspOrg=mspOrg2;
-            contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [assetCollection, sharedCollectionOrg2Org3] });
-            console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetToDeleteBuyRequest);
-            statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
-            statefulTxn.setEndorsingOrganizations(mspOrg);
-            result = await statefulTxn.submit(assetToDeleteBuyRequest,assetCollection);
-        }else if(org==="org3"){
+            result = await contractOrg.evaluateTransaction('ReadAssetPrice', assetToReadPrice,assetCollection);
+            temp=assetCollection;
+         }else if(org==="org3"){
 
             gatewayOrg = await initContractFromOrg3Identity();
             networkOrg = await gatewayOrg.getNetwork(channelName);
             contractOrg = networkOrg.getContract(chaincodeName);
             mspOrg=mspOrg3;
             contractOrg.addDiscoveryInterest({ name: chaincodeName, collectionNames: [sharedCollectionOrg2Org3] });
-            console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetToDeleteBuyRequest);
-            statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
-            statefulTxn.setEndorsingOrganizations(mspOrg);
-            result = await statefulTxn.submit(assetToDeleteBuyRequest,sharedCollectionOrg2Org3);
-
+            result = await contractOrg.evaluateTransaction('ReadAssetPrice', assetToReadPrice,sharedCollectionOrg2Org3);
+            temp=sharedCollectionOrg2Org3;
             
         }else{
             console.log("No org was given. Can't connect to any profiles");
@@ -1198,47 +1499,31 @@ router.post('/postDeleteBuyRequest',async function (req,res) {
     
                     })));
         }
-
-
-
-        let temp,objSent;
-        // console.log('\n--> Submit Transaction: DeleteBuyRequest ' + assetID);
-        // statefulTxn = contractOrg.createTransaction('DeleteBuyRequest');
-        // statefulTxn.setEndorsingOrganizations(mspOrg);
-        // result = await statefulTxn.submit(assetID,assetCollection);
-        temp={
-            success:"true"
-        }
-        // result = await contractOrg2.evaluateTransaction('ReadRequestToBuy', assetID,assetCollection);
-        // console.log(`*** Result: ${(result.toString())}`);
-        console.log("successfully delete buiy request");
-        objSent=Buffer.from(JSON.stringify(temp))
-        res.end(objSent);
-        
-
+        console.log(`\n~~~~~~~~~~~~~~~ Reading price as ${org} from ${temp} `);
+        console.log(result.toString())
+        res.end(result)
+    
     }catch(error){
-        console.error(`Couldnt delete buy request ${error}`);
+        console.error(`failed to read buy request ${error}`);
         res.end( Buffer.from(
             JSON.stringify(
                 {
                     serverError:"error",
-                    errorMessage:"Cannot Delete buy request.",
-                    errorStatus:404
-
+                    errorMessage:"Price for ",
+                    errorStatus:500
                 })));
     }
-        // res.end( Buffer.from(
-        //     JSON.stringify(
-        //         {
-        //             errorCLI:"error",
-        //             errorMessage:error.responses[0].response.message,
-        //             errorStatus:error.responses[0].response.status
 
-        //         })));
-    }
+});
 
 
-);
+
+
+
+
+
+
+
 
 
 
